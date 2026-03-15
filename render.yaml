@@ -1,16 +1,12 @@
 services:
-  - type: worker
-    name: life-coach-bot
-    env: python
+  - type: web
+    name: PolyRhythm_Wellness_Bot
+    env: docker
     plan: free
-    buildCommand: pip install -r requirements.txt
-    startCommand: python main.py
     envVars:
       - key: GROQ_API_KEY
-        sync: false        # You'll paste this in Render's dashboard
+        sync: false
       - key: TELEGRAM_BOT_TOKEN
-        sync: false        # You'll paste this in Render's dashboard
-    disk:
-      name: bot-data
-      mountPath: /data
-      sizeGB: 1            # Free persistent disk for SQLite DB
+        sync: false
+      - key: DATABASE_URL
+        sync: false

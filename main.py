@@ -124,10 +124,11 @@ async def run_webhook(hf_space_url: str):
     aio_app.router.add_get("/",         health)
     aio_app.router.add_get("/health",   health)
 
+    port = int(os.getenv("PORT", 7860))
     runner = web.AppRunner(aio_app)
     await runner.setup()
-    await web.TCPSite(runner, "0.0.0.0", 7860).start()
-    logger.info("aiohttp server listening on port 7860")
+    await web.TCPSite(runner, "0.0.0.0", port).start()
+    logger.info(f"aiohttp server listening on port {port}")
 
     # Run until cancelled
     try:
@@ -156,10 +157,14 @@ def main():
     init_db()
     logger.info("Database initialised.")
 
-    hf_space_url = os.getenv("HF_SPACE_URL", "").strip()
-    if hf_space_url:
-        logger.info("HF_SPACE_URL detected — starting in WEBHOOK mode.")
-        asyncio.run(run_webhook(hf_space_url))
+    # Support both HuggingFace (HF_SPACE_URL) and Render (RENDER_EXTERNAL_URL)
+    cloud_url = (
+        os.getenv("HF_SPACE_URL", "").strip()
+        or os.getenv("RENDER_EXTERNAL_URL", "").strip()
+    )
+    if cloud_url:
+        logger.info(f"Cloud deployment detected ({cloud_url}) — starting in WEBHOOK mode.")
+        asyncio.run(run_webhook(cloud_url))
     else:
         run_polling()
 
