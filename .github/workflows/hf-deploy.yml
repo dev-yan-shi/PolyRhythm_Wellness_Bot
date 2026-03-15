@@ -1,0 +1,23 @@
+name: Deploy to HuggingFace Spaces
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # full history needed for HF push
+
+      - name: Push to HuggingFace Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          git config --global user.email "deploy@polyrhythm.bot"
+          git config --global user.name  "PolyRhythm Deploy"
+          git remote add hf https://dev-yan-shi:$HF_TOKEN@huggingface.co/spaces/dev-yan-shi/PolyRhythm-Bot
+          git push hf main --force
