@@ -2,6 +2,8 @@
 Life Coach Telegram Bot — Entry point
 """
 import logging
+import threading
+from http.server import HTTPServer, BaseHTTPRequestHandler
 
 from telegram.ext import (
     Application, CommandHandler, MessageHandler,
@@ -33,6 +35,21 @@ logging.basicConfig(
     level=logging.INFO,
 )
 logger = logging.getLogger(__name__)
+
+
+# ── Health check server (keeps HuggingFace Space awake) ──────────────────────
+class _HealthHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(b"PolyRhythm bot is running OK")
+    def log_message(self, *args):
+        pass  # suppress noisy access logs
+
+def _start_health_server(port: int = 7860):
+    server = HTTPServer(("0.0.0.0", port), _HealthHandler)
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    logger.info(f"Health-check server listening on port {port}")
 
 
 def main():
@@ -87,6 +104,9 @@ def main():
 
     # ── Scheduled jobs ────────────────────────────────────────────────────────
     setup_jobs(app.job_queue)
+
+    # ── Health check (required for HuggingFace Spaces to stay awake) ─────────
+    _start_health_server()
 
     # ── Start ─────────────────────────────────────────────────────────────────
     logger.info("Bot is running. Press Ctrl+C to stop.")
