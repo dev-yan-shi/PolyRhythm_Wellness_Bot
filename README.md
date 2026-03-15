@@ -1,3 +1,12 @@
+---
+title: PolyRhythm Wellness Bot
+emoji: 🥁
+colorFrom: purple
+colorTo: blue
+sdk: docker
+pinned: false
+---
+
 # 🥁 PolyRhythm — AI Wellness Coach
 
 > *"Managing the different rhythms of your life — physical, mental, nutritional, and beyond."*
