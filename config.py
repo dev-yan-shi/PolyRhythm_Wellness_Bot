@@ -42,8 +42,8 @@ GROQ_TEXT_MODEL   = "llama-3.3-70b-versatile"
 GROQ_VISION_MODEL = "meta-llama/llama-4-scout-17b-16e-instruct"
 
 # ── Paths ─────────────────────────────────────────────────────────────────────
-# On Render, the persistent disk is mounted at /data (env var RENDER is set automatically).
-# Locally, the DB lives in the project folder.
-_DATA_DIR = "/data" if os.getenv("RENDER") else "."
+# DATA_DIR is set to /data on Fly.io and Render (persistent volume).
+# Falls back to current directory when running locally.
+_DATA_DIR = os.getenv("DATA_DIR", ".")
 DB_PATH   = os.path.join(_DATA_DIR, "life_coach.db")
 SETTINGS_PATH = "settings.json"  # legacy — no longer used for scheduler

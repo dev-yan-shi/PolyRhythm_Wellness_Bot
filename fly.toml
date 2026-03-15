@@ -1,0 +1,15 @@
+app = "polyrhythm-wellness-bot"
+primary_region = "sin"   # Singapore — closest free region to Bangalore
+
+[build]
+
+[env]
+  DATA_DIR = "/data"
+
+[[mounts]]
+  source      = "bot_data"
+  destination = "/data"
+
+[[vm]]
+  size   = "shared-cpu-1x"
+  memory = "256mb"
